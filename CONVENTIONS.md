@@ -32,8 +32,11 @@ priority: high | medium | low
 
 ## File Naming
 
-- Lowercase with hyphens: `my-note-title.md`
-- Journal uses dates: `2026-03-27.md`
+- English notes: PascalCase without spaces (e.g., `ReactHooksGuide.md`, `DockerComposeNotes.md`)
+- Chinese notes: Original Chinese text as filename (e.g., `深度学习笔记.md`, `RPA与影刀自动化工具.md`)
+- Journal entries: date format `YYYY-MM-DD.md`
+- Custom name: Use `--name` parameter to specify a custom filename
+- Filename conflicts: append timestamp suffix `{YYYYMMDDHHmmss}`
 - Each directory has `_index.md` as its index
 
 ## Content Rules

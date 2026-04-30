@@ -53,61 +53,61 @@ export SKILL_PATH="$HOME/.claude/skills/organize"
 
 ### Set up vault structure
 
-Make sure your vault has these directories and files (copy `templates/` and `examples/` from this repo):
+The skill auto-creates templates on first use. No manual setup needed.
 
-```
-your-vault/
-├── _directory-map.md       # Directory classification table
-├── _index.md               # Vault index
-├── _tags.md                # Tag index
-├── _graph.md               # Relationship graph
-├── CONVENTIONS.md          # Writing conventions
-├── templates/              # Note templates (copy from this repo)
-├── areas/                  # Long-term focus areas
-├── projects/               # Goal-oriented projects
-├── resources/              # References & learning notes
-├── journal/                # Daily logs
-└── ideas/                  # Idea drafts
-```
+Just point `VAULT_PATH` to any directory (even an empty one) and start organizing.
 
-### Initialize indices
-
-Create the initial `_directory-map.md` from the example provided in this repo, then start organizing!
+All index files (`_directory-map.md`, `_index.md`, `_tags.md`, `_graph.md`) and PARA directories (`areas/`, `projects/`, `resources/`, `journal/`, `ideas/`) are created on demand as you organize content.
 
 ## Usage
 
 In Claude Code, use:
 
 ```
-/organize <content>                    — Classify and save text
-/organize                              — Organize current conversation
-/organize --title "My Title" <content> — Specify a custom title
+/organize <content>                              — Classify and save text
+/organize                                        — Organize current conversation
+/organize --title "My Title" <content>           — Specify a custom title
+/organize --name "FileName" <content>             — Specify a custom filename
+/organize --title "X" --name "Y" <content>        — Specify both title and filename
 ```
 
 ### Classification Scoring
 
-The skill scores content against your directories:
+The skill uses heuristic guidance (not a precise algorithm) to score content against directories. It verifies keyword matches explicitly before deciding:
 
-| Score | Action |
-|-------|--------|
-| ≥ 7   | Auto-classify |
-| 4–6   | Show top-2 candidates for you to choose |
-| < 4   | Ask if a new category is needed |
+| Guideline | Action |
+|-----------|--------|
+| Strong match (≈≥7) | Auto-classify |
+| Moderate match (≈4-6) | Show top-2 candidates |
+| Weak/no match (≈<4) | Ask if new category needed |
 
 ## File Structure
 
 ```
 claude-obsidian-organizer/
-├── SKILL.md               # The core Claude Code slash command
+├── SKILL.md               # Skill definition (English)
+├── SKILL.zh-CN.md         # Skill definition (Chinese)
 ├── README.md              # This file
+├── README.zh-CN.md        # Chinese README
 ├── CONVENTIONS.md         # Writing conventions guide
+├── scripts/               # Python tooling
+│   ├── search.py          # Full-text search
+│   ├── stats.py           # Vault statistics
+│   ├── orphans.py         # Orphan note detection
+│   └── backlinks.py       # Backlink finder
 ├── templates/             # Obsidian note templates
-│   ├── note.md            # Generic note
+│   ├── note.md            # Generic note (English)
+│   ├── note.zh-CN.md      # Generic note (Chinese)
 │   ├── area.md            # Long-term focus area
+│   ├── area.zh-CN.md      # Chinese version
 │   ├── project.md         # Goal-oriented project
+│   ├── project.zh-CN.md   # Chinese version
 │   ├── resource.md        # Reference/resource
+│   ├── resource.zh-CN.md  # Chinese version
 │   ├── idea.md            # Idea/thought
-│   └── journal.md         # Daily journal
+│   ├── idea.zh-CN.md      # Chinese version
+│   ├── journal.md         # Daily journal
+│   └── journal.zh-CN.md   # Chinese version
 └── examples/              # Example vault files
     ├── _directory-map.md  # Classification mapping
     ├── _index.md          # Vault index
@@ -147,7 +147,7 @@ Unlike plugins that require Obsidian to be running, this skill works entirely at
 - **No plugins needed** — Works with any Obsidian vault, even without Obsidian running
 - **AI-powered classification** — Goes beyond simple keyword matching to understand content context
 - **Version-controlled** — Git integration means every note is backed up
-- **Prompt-driven** — No external binaries or dependencies beyond Claude Code itself
+- **Built-in tooling** — Python scripts for reliable search, stats, and link analysis
 
 ## License
 

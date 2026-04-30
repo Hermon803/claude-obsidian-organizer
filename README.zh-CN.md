@@ -22,19 +22,37 @@
 
 ## 安装
 
-### 1. 安装 skill 文件
+一行命令：
 
 ```bash
-# 创建 skills 目录
-mkdir -p ~/.claude/skills/organize
-
-# 复制 skill 文件
-cp SKILL.zh-CN.md ~/.claude/skills/organize/SKILL.md
+mkdir -p ~/.claude/skills/organize && \
+curl -fsSL https://raw.githubusercontent.com/Hermon803/claude-obsidian-organizer/main/SKILL.zh-CN.md \
+  -o ~/.claude/skills/organize/SKILL.md
 ```
 
-### 2. 准备知识库结构
+### 设置 vault 路径
 
-确保你的 Obsidian 知识库包含以下结构：
+在全局 Claude Code 配置中设置 `VAULT_PATH`：
+
+```bash
+cat >> ~/.claude/settings.local.json << 'EOF'
+{
+  "env": {
+    "VAULT_PATH": "/path/to/your/vault"
+  }
+}
+EOF
+```
+
+或者添加到 shell 配置文件（`~/.bashrc` / `~/.zshrc`）：
+
+```bash
+export VAULT_PATH="/path/to/your/vault"
+```
+
+### 准备知识库结构
+
+确保你的 Obsidian 知识库包含以下目录和文件（从本仓库复制 `templates/` 和 `examples/`）：
 
 ```
 your-vault/
@@ -43,7 +61,7 @@ your-vault/
 ├── _tags.md                # 标签索引
 ├── _graph.md               # 关系图谱
 ├── CONVENTIONS.md          # 写作规范
-├── templates/              # 笔记模板（从本仓库复制）
+├── templates/              # 笔记模板
 ├── areas/                  # 长期关注的领域
 ├── projects/               # 有明确目标的项目
 ├── resources/              # 参考资料和学习笔记
@@ -51,25 +69,7 @@ your-vault/
 └── ideas/                  # 想法草稿
 ```
 
-### 3. 配置知识库路径
-
-在知识库目录下的 Claude Code 项目配置中设置路径（`.claude/settings.local.json`）：
-
-```json
-{
-  "env": {
-    "VAULT_PATH": "/path/to/your/vault"
-  }
-}
-```
-
-或者直接在 `SKILL.md` 中将 `$VAULT_PATH` 替换为你的实际路径。
-
-### 4. 设置模板
-
-将本仓库的 `templates/` 目录复制到你的知识库中，按需自定义。
-
-### 5. 初始化索引
+### 初始化索引
 
 参考本仓库 `examples/` 中的示例，创建初始的 `_directory-map.md`，然后开始使用！
 

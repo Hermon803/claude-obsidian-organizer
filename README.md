@@ -22,19 +22,37 @@ A **Claude Code slash command** that intelligently classifies conversation conte
 
 ## Installation
 
-### 1. Install the skill
+One line:
 
 ```bash
-# Create skills directory
-mkdir -p ~/.claude/skills/organize
-
-# Copy the skill file
-cp SKILL.md ~/.claude/skills/organize/
+mkdir -p ~/.claude/skills/organize && \
+curl -fsSL https://raw.githubusercontent.com/Hermon803/claude-obsidian-organizer/main/SKILL.md \
+  -o ~/.claude/skills/organize/SKILL.md
 ```
 
-### 2. Set up your vault structure
+### Set vault path
 
-Make sure your Obsidian vault has this structure:
+Set `VAULT_PATH` in global Claude Code settings:
+
+```bash
+cat >> ~/.claude/settings.local.json << 'EOF'
+{
+  "env": {
+    "VAULT_PATH": "/path/to/your/vault"
+  }
+}
+EOF
+```
+
+Or set it in your shell profile (`~/.bashrc` / `~/.zshrc`):
+
+```bash
+export VAULT_PATH="/path/to/your/vault"
+```
+
+### Set up vault structure
+
+Make sure your vault has these directories and files (copy `templates/` and `examples/` from this repo):
 
 ```
 your-vault/
@@ -51,25 +69,7 @@ your-vault/
 └── ideas/                  # Idea drafts
 ```
 
-### 3. Configure vault path
-
-Set the vault path in your Claude Code project settings (`.claude/settings.local.json` in your vault):
-
-```json
-{
-  "env": {
-    "VAULT_PATH": "/path/to/your/vault"
-  }
-}
-```
-
-Or edit `SKILL.md` directly to replace `$VAULT_PATH` with your actual path.
-
-### 4. Set up templates
-
-Copy the `templates/` directory from this repo into your vault and customize as needed.
-
-### 5. Initialize indices
+### Initialize indices
 
 Create the initial `_directory-map.md` from the example provided in this repo, then start organizing!
 

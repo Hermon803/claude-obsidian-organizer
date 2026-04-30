@@ -11,25 +11,41 @@ Triggers: organize, 整理, 归类, 保存笔记, 存到仓库, 归档, 分类�
 
 Classify conversation content or specified text into an Obsidian knowledge base. Automatically analyze content, match the best directory, create formatted notes, update indices, and commit to Git.
 
-> This is a **Claude Code custom slash command**. Install it in your project's `.claude/skills/organize/SKILL.md`.
-
 ## Prerequisites
 
 - [Claude Code](https://claude.ai/code) installed
-- An Obsidian vault (any local directory)
-- Git repository initialized in the vault
+- An Obsidian vault (any local directory) with `$VAULT_PATH` set to its absolute path
+- Git repository initialized in your vault
 
 ## Installation
 
-1. Create the skills directory in your Claude Code config:
+One line:
 
-   ```bash
-   mkdir -p ~/.claude/skills/organize
-   ```
+```bash
+mkdir -p ~/.claude/skills/organize && \
+curl -fsSL https://raw.githubusercontent.com/Hermon803/claude-obsidian-organizer/main/SKILL.md \
+  -o ~/.claude/skills/organize/SKILL.md
+```
 
-2. Copy this file to `~/.claude/skills/organize/SKILL.md`
+### Set vault path
 
-3. Replace `$VAULT_PATH` in this file with the absolute path to your Obsidian vault
+Set `VAULT_PATH` in global Claude Code settings:
+
+```bash
+cat >> ~/.claude/settings.local.json << 'EOF'
+{
+  "env": {
+    "VAULT_PATH": "/path/to/your/vault"
+  }
+}
+EOF
+```
+
+Or set it in your shell profile (`~/.bashrc` / `~/.zshrc`):
+
+```bash
+export VAULT_PATH="/path/to/your/vault"
+```
 
 ## Vault Configuration
 

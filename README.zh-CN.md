@@ -17,28 +17,28 @@
 ## 前置条件
 
 - 已安装 [Claude Code](https://claude.ai/code)
+- Python 3.6+
 - 一个 Obsidian 知识库（任意本地目录）
-- 知识库已初始化 Git 仓库
+- Git（推荐但非必需）
 
 ## 安装
 
-一行命令：
+克隆仓库：
 
 ```bash
-mkdir -p ~/.claude/skills/organize && \
-curl -fsSL https://raw.githubusercontent.com/Hermon803/claude-obsidian-organizer/main/SKILL.zh-CN.md \
-  -o ~/.claude/skills/organize/SKILL.md
+git clone https://github.com/Hermon803/claude-obsidian-organizer.git ~/.claude/skills/organize
 ```
 
-### 设置 vault 路径
+### 设置环境变量
 
-在全局 Claude Code 配置中设置 `VAULT_PATH`：
+在全局 Claude Code 配置中设置 `VAULT_PATH` 和 `SKILL_PATH`：
 
 ```bash
 cat >> ~/.claude/settings.local.json << 'EOF'
 {
   "env": {
-    "VAULT_PATH": "/path/to/your/vault"
+    "VAULT_PATH": "/path/to/your/vault",
+    "SKILL_PATH": "/root/.claude/skills/organize"
   }
 }
 EOF
@@ -48,6 +48,7 @@ EOF
 
 ```bash
 export VAULT_PATH="/path/to/your/vault"
+export SKILL_PATH="$HOME/.claude/skills/organize"
 ```
 
 ### 准备知识库结构

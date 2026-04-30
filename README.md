@@ -17,37 +17,38 @@ A **Claude Code slash command** that intelligently classifies conversation conte
 ## Prerequisites
 
 - [Claude Code](https://claude.ai/code) installed
+- Python 3.6+
 - An Obsidian vault (any local directory)
-- Git repository initialized in your vault
+- Git (recommended but optional)
 
 ## Installation
 
-One line:
+Clone the repo:
 
 ```bash
-mkdir -p ~/.claude/skills/organize && \
-curl -fsSL https://raw.githubusercontent.com/Hermon803/claude-obsidian-organizer/main/SKILL.md \
-  -o ~/.claude/skills/organize/SKILL.md
+git clone https://github.com/Hermon803/claude-obsidian-organizer.git ~/.claude/skills/organize
 ```
 
-### Set vault path
+### Set environment variables
 
-Set `VAULT_PATH` in global Claude Code settings:
+Set `VAULT_PATH` and `SKILL_PATH` in global Claude Code settings:
 
 ```bash
 cat >> ~/.claude/settings.local.json << 'EOF'
 {
   "env": {
-    "VAULT_PATH": "/path/to/your/vault"
+    "VAULT_PATH": "/path/to/your/vault",
+    "SKILL_PATH": "/root/.claude/skills/organize"
   }
 }
 EOF
 ```
 
-Or set it in your shell profile (`~/.bashrc` / `~/.zshrc`):
+Or set them in your shell profile (`~/.bashrc` / `~/.zshrc`):
 
 ```bash
 export VAULT_PATH="/path/to/your/vault"
+export SKILL_PATH="$HOME/.claude/skills/organize"
 ```
 
 ### Set up vault structure

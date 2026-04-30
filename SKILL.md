@@ -14,37 +14,38 @@ Classify conversation content or specified text into an Obsidian knowledge base.
 ## Prerequisites
 
 - [Claude Code](https://claude.ai/code) installed
+- Python 3.6+
 - An Obsidian vault (any local directory) with `$VAULT_PATH` set to its absolute path
 - Git repository initialized in your vault — **recommended but optional**; the skill operates without git
 
 ## Installation
 
-One line:
+Clone the repo:
 
 ```bash
-mkdir -p ~/.claude/skills/organize && \
-curl -fsSL https://raw.githubusercontent.com/Hermon803/claude-obsidian-organizer/main/SKILL.md \
-  -o ~/.claude/skills/organize/SKILL.md
+git clone https://github.com/Hermon803/claude-obsidian-organizer.git ~/.claude/skills/organize
 ```
 
-### Set vault path
+### Set environment variables
 
-Set `VAULT_PATH` in global Claude Code settings:
+Add to `~/.claude/settings.local.json`:
 
 ```bash
 cat >> ~/.claude/settings.local.json << 'EOF'
 {
   "env": {
-    "VAULT_PATH": "/path/to/your/vault"
+    "VAULT_PATH": "/path/to/your/vault",
+    "SKILL_PATH": "/root/.claude/skills/organize"
   }
 }
 EOF
 ```
 
-Or set it in your shell profile (`~/.bashrc` / `~/.zshrc`):
+Or set them in your shell profile (`~/.bashrc` / `~/.zshrc`):
 
 ```bash
 export VAULT_PATH="/path/to/your/vault"
+export SKILL_PATH="$HOME/.claude/skills/organize"
 ```
 
 ## Vault Configuration
@@ -76,6 +77,8 @@ your-vault/
 ├── resources/              # References & learning notes
 ├── journal/                # Daily logs
 └── ideas/                  # Idea drafts
+
+Scripts are at `$SKILL_PATH/scripts/` (not inside the vault).
 ```
 
 ## Usage
@@ -161,7 +164,57 @@ Fallback: if the selected template file does not exist, try the other language v
 
 ---
 
-## 3. Core Workflow
+## 4. Built-in Tools
+
+These Python scripts live at `$SKILL_PATH/scripts/` and provide reliable vault operations.
+Always use these tools instead of ad-hoc `find`/`grep` commands unless the tool cannot handle your specific need.
+
+### search
+
+Search vault notes by keyword. Returns file paths with matching context lines.
+
+```
+python3 "$SKILL_PATH/scripts/search.py" "$VAULT_PATH" <keyword> [--limit N] [--type TYPE]
+
+# --type: filter by note type (area/project/resource/idea/journal)
+# --limit: max results (default 20)
+```
+
+### stats
+
+Vault statistics: note counts by type, tag frequency, orphan count, broken links.
+
+```
+python3 "$SKILL_PATH/scripts/stats.py" "$VAULT_PATH"
+```
+
+### orphans
+
+List orphan notes that have no incoming `[[]]` links from other notes.
+
+```
+python3 "$SKILL_PATH/scripts/orphans.py" "$VAULT_PATH"
+```
+
+### backlinks
+
+Find all notes that link to a given note title.
+
+```
+python3 "$SKILL_PATH/scripts/backlinks.py" "$VAULT_PATH" <note_title>
+# note_title: filename without .md extension
+```
+
+### Tool Usage Rules
+
+1. **Prefer these tools** over ad-hoc shell commands for vault searching and analysis
+2. **Parse the output** — tools return structured `key: value` or line-based formats
+3. **Error handling**: if a tool exits with non-zero, read its stderr message and report to the user
+4. **Missing script**: if `$SKILL_PATH` is not set or the script doesn't exist, fall back to manual commands and remind the user they may have an incomplete install
+
+---
+
+## 5. Core Workflow
 
 ### Step 1: Read Directory Map
 
@@ -255,13 +308,16 @@ Sanitization (apply after naming):
 Purpose: If the new note mentions other notes or topics that exist in the vault, establish `[[]]` links in both directions.
 
 Algorithm:
-1. List all existing notes in the vault recursively (exclude `_index.md`, `_tags.md`, `_graph.md`, `_directory-map.md`, `CONVENTIONS.md`, and `templates/`)
-2. From the new note's content, extract up to 5 candidate link targets:
-   a. Any `[[...]]` references already present in the new note body
-   b. Topics from the summary or body that match an existing note's title (case-insensitive match)
-   c. Tags shared between the new note and existing notes
-3. For each candidate:
-   a. Verify relevance by reading the existing note's summary or first paragraph
+1. Extract up to 5 link keywords from the new note:
+   a. Any `[[...]]` references already present in the note body
+   b. Topics from the summary or body that may match existing note titles
+   c. Tags from the note's frontmatter
+2. For each keyword, use the **search** tool to find candidate notes:
+   ```
+   python3 "$SKILL_PATH/scripts/search.py" "$VAULT_PATH" "<keyword>"
+   ```
+3. Review the search results. For each returning a candidate:
+   a. Verify relevance by reading the candidate note's title and first paragraph
    b. If relevant, add `[[CandidateNote]]` to the new note's `related:` field
    c. In the existing candidate note, append `[[NewNote]]` to its `related:` field (preserving existing entries)
    d. Update the existing note's `updated:` date
@@ -397,3 +453,5 @@ updated: YYYY-MM-DD
 | Git push fails | Keep local commit, inform user |
 | Filename conflict | Append timestamp |
 | Template missing | Use standard frontmatter template |
+| Script not found ($SKILL_PATH/scripts/) | Fall back to manual commands, inform user of incomplete install |
+| Python3 not installed | Fall back to manual commands, suggest installing Python |
